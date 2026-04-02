@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="現在地の天気情報をリアルタイムで表示し、気温に応じたアドバイスを提供するWebアプリ">
+  <title>Weather Now - 今の天気</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+  <!-- Background particles -->
+  <div id="particles"></div>
+
+  <!-- API Key Modal -->
+  <div id="api-key-modal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-icon">🔑</div>
+      <h2>APIキーの設定</h2>
+      <p>OpenWeatherMap のAPIキーを入力してください。<br>
+        <a href="https://openweathermap.org/appid" target="_blank" rel="noopener">無料のAPIキーを取得 →</a>
+      </p>
+      <input type="text" id="api-key-input" placeholder="APIキーを入力..." autocomplete="off">
+      <button id="api-key-submit" class="btn-primary">保存して開始</button>
+      <p class="modal-note">※ APIキーはブラウザのLocalStorageに保存されます</p>
+    </div>
+  </div>
+
+  <!-- Main App -->
+  <div id="app" class="hidden">
+    <!-- Header -->
+    <header id="app-header">
+      <div class="header-content">
+        <div class="header-left">
+          <span class="app-logo">⛅</span>
+          <h1>Weather Now</h1>
+        </div>
+        <div class="header-right">
+          <button id="refresh-btn" class="icon-btn" title="更新">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="23 4 23 10 17 10"/>
+              <polyline points="1 20 1 14 7 14"/>
+              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+            </svg>
+          </button>
+          <button id="settings-btn" class="icon-btn" title="設定">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Loading State -->
+    <div id="loading-state" class="state-container">
+      <div class="spinner"></div>
+      <p>位置情報を取得中...</p>
+    </div>
+
+    <!-- Error State -->
+    <div id="error-state" class="state-container hidden">
+      <div class="error-icon">⚠️</div>
+      <p id="error-message"></p>
+      <button id="retry-btn" class="btn-primary">再試行</button>
+    </div>
+
+    <!-- Weather Content -->
+    <main id="weather-content" class="hidden">
+      <!-- Location Bar -->
+      <div id="location-bar">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+          <circle cx="12" cy="10" r="3"/>
+        </svg>
+        <span id="location-name">--</span>
+        <span class="location-time" id="update-time">--</span>
+      </div>
+
+      <!-- Main Weather Card -->
+      <section id="main-weather-card" class="glass-card">
+        <div class="weather-primary">
+          <div class="weather-icon-wrap">
+            <img id="weather-icon" src="" alt="天気アイコン" width="120" height="120">
+          </div>
+          <div class="weather-temp-block">
+            <div class="temp-main">
+              <span id="temp-value">--</span>
+              <span class="temp-unit">°C</span>
+            </div>
+            <div id="weather-desc" class="weather-description">--</div>
+          </div>
+        </div>
+        <div class="weather-range">
+          <span class="temp-high">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+            <span id="temp-max">--</span>°C
+          </span>
+          <span class="temp-low">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            <span id="temp-min">--</span>°C
+          </span>
+        </div>
+      </section>
+
+      <!-- Advice Card -->
+      <section id="advice-card" class="glass-card">
+        <h2 class="section-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="16" x2="12" y2="12"/>
+            <line x1="12" y1="8" x2="12.01" y2="8"/>
+          </svg>
+          今日のアドバイス
+        </h2>
+        <div id="advice-list" class="advice-list"></div>
+      </section>
+
+      <!-- Detail Cards Grid -->
+      <section id="detail-grid" class="detail-grid">
+        <div class="detail-card glass-card" id="detail-feels">
+          <div class="detail-label">体感温度</div>
+          <div class="detail-value"><span id="feels-like">--</span>°C</div>
+          <div class="detail-icon">🌡️</div>
+        </div>
+        <div class="detail-card glass-card" id="detail-humidity">
+          <div class="detail-label">湿度</div>
+          <div class="detail-value"><span id="humidity">--</span>%</div>
+          <div class="detail-icon">💧</div>
+        </div>
+        <div class="detail-card glass-card" id="detail-wind">
+          <div class="detail-label">風速</div>
+          <div class="detail-value"><span id="wind-speed">--</span> m/s</div>
+          <div class="detail-icon">💨</div>
+        </div>
+        <div class="detail-card glass-card" id="detail-pressure">
+          <div class="detail-label">気圧</div>
+          <div class="detail-value"><span id="pressure">--</span> hPa</div>
+          <div class="detail-icon">📊</div>
+        </div>
+        <div class="detail-card glass-card" id="detail-visibility">
+          <div class="detail-label">視界</div>
+          <div class="detail-value"><span id="visibility">--</span> km</div>
+          <div class="detail-icon">👁️</div>
+        </div>
+        <div class="detail-card glass-card" id="detail-clouds">
+          <div class="detail-label">雲量</div>
+          <div class="detail-value"><span id="clouds">--</span>%</div>
+          <div class="detail-icon">☁️</div>
+        </div>
+      </section>
+
+      <!-- Sunrise / Sunset -->
+      <section id="sun-card" class="glass-card">
+        <div class="sun-row">
+          <div class="sun-item">
+            <span class="sun-emoji">🌅</span>
+            <div>
+              <div class="sun-label">日の出</div>
+              <div class="sun-time" id="sunrise-time">--:--</div>
+            </div>
+          </div>
+          <div class="sun-bar-container">
+            <div class="sun-bar">
+              <div class="sun-progress" id="sun-progress"></div>
+              <div class="sun-dot" id="sun-dot">☀️</div>
+            </div>
+          </div>
+          <div class="sun-item">
+            <span class="sun-emoji">🌇</span>
+            <div>
+              <div class="sun-label">日の入</div>
+              <div class="sun-time" id="sunset-time">--:--</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
