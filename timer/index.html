@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="モダンで美しいオリジナルタイマーアプリ。カウントダウンタイマーとストップウォッチ機能を搭載。">
+  <title>Chrono — オリジナルタイマー</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="background-effects">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <div class="app-container">
+    <header class="app-header">
+      <h1 class="app-title">
+        <span class="title-icon">⏱</span>
+        Chrono
+      </h1>
+      <nav class="mode-switcher">
+        <button class="mode-btn active" data-mode="timer" id="btn-mode-timer">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12,6 12,12 16,14"/>
+          </svg>
+          タイマー
+        </button>
+        <button class="mode-btn" data-mode="stopwatch" id="btn-mode-stopwatch">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="13" r="9"/>
+            <path d="M12 9v4l2 2"/>
+            <path d="M10 2h4"/>
+            <path d="M12 2v2"/>
+          </svg>
+          ストップウォッチ
+        </button>
+      </nav>
+    </header>
+
+    <main class="main-content">
+      <!-- Timer Mode -->
+      <section class="timer-section active" id="section-timer">
+        <!-- Preset Buttons -->
+        <div class="presets">
+          <button class="preset-btn" data-seconds="60" id="preset-1m">1分</button>
+          <button class="preset-btn" data-seconds="180" id="preset-3m">3分</button>
+          <button class="preset-btn" data-seconds="300" id="preset-5m">5分</button>
+          <button class="preset-btn" data-seconds="600" id="preset-10m">10分</button>
+          <button class="preset-btn" data-seconds="900" id="preset-15m">15分</button>
+          <button class="preset-btn" data-seconds="1800" id="preset-30m">30分</button>
+        </div>
+
+        <!-- Circular Display -->
+        <div class="timer-display">
+          <svg class="progress-ring" viewBox="0 0 320 320" id="progress-ring">
+            <defs>
+              <linearGradient id="gradient-progress" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#6366f1"/>
+                <stop offset="50%" style="stop-color:#8b5cf6"/>
+                <stop offset="100%" style="stop-color:#a78bfa"/>
+              </linearGradient>
+              <linearGradient id="gradient-complete" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#34d399"/>
+                <stop offset="100%" style="stop-color:#10b981"/>
+              </linearGradient>
+              <filter id="glow">
+                <feGaussianBlur stdDeviation="3" result="blur"/>
+                <feMerge>
+                  <feMergeNode in="blur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+            </defs>
+            <circle class="progress-ring-bg" cx="160" cy="160" r="142" />
+            <circle class="progress-ring-fill" cx="160" cy="160" r="142" id="progress-fill" />
+          </svg>
+          <div class="time-display" id="timer-time-display">
+            <div class="time-input-group" id="timer-input-group">
+              <div class="time-field">
+                <input type="number" id="input-hours" class="time-input" min="0" max="99" value="0" placeholder="00">
+                <label class="time-label">時</label>
+              </div>
+              <span class="time-separator">:</span>
+              <div class="time-field">
+                <input type="number" id="input-minutes" class="time-input" min="0" max="59" value="5" placeholder="00">
+                <label class="time-label">分</label>
+              </div>
+              <span class="time-separator">:</span>
+              <div class="time-field">
+                <input type="number" id="input-seconds" class="time-input" min="0" max="59" value="0" placeholder="00">
+                <label class="time-label">秒</label>
+              </div>
+            </div>
+            <div class="time-running hidden" id="timer-running-display">
+              <span class="digits" id="timer-digits">00:05:00</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+          <button class="control-btn secondary" id="btn-timer-reset" disabled>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 12a9 9 0 1 1 9 9"/>
+              <polyline points="3,21 3,12 12,12"/>
+            </svg>
+            リセット
+          </button>
+          <button class="control-btn primary" id="btn-timer-start">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" class="icon-play">
+              <polygon points="5,3 19,12 5,21"/>
+            </svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" class="icon-pause hidden">
+              <rect x="6" y="4" width="4" height="16"/>
+              <rect x="14" y="4" width="4" height="16"/>
+            </svg>
+            <span id="btn-timer-start-text">スタート</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Stopwatch Mode -->
+      <section class="timer-section" id="section-stopwatch">
+        <div class="timer-display stopwatch-display">
+          <svg class="progress-ring" viewBox="0 0 320 320" id="sw-progress-ring">
+            <defs>
+              <linearGradient id="gradient-sw" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#f59e0b"/>
+                <stop offset="50%" style="stop-color:#f97316"/>
+                <stop offset="100%" style="stop-color:#ef4444"/>
+              </linearGradient>
+            </defs>
+            <circle class="progress-ring-bg" cx="160" cy="160" r="142" />
+            <circle class="progress-ring-fill sw-fill" cx="160" cy="160" r="142" id="sw-progress-fill" />
+          </svg>
+          <div class="time-display">
+            <div class="time-running">
+              <span class="digits" id="sw-digits">00:00:00</span>
+              <span class="milliseconds" id="sw-ms">.00</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lap times -->
+        <div class="laps-container" id="laps-container">
+          <div class="laps-header hidden" id="laps-header">
+            <span>ラップ</span>
+            <span>タイム</span>
+            <span>合計</span>
+          </div>
+          <div class="laps-list" id="laps-list"></div>
+        </div>
+
+        <div class="controls">
+          <button class="control-btn secondary" id="btn-sw-lap" disabled>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
+              <line x1="4" y1="22" x2="4" y2="15"/>
+            </svg>
+            <span id="btn-sw-lap-text">ラップ</span>
+          </button>
+          <button class="control-btn primary sw-primary" id="btn-sw-start">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" class="icon-play">
+              <polygon points="5,3 19,12 5,21"/>
+            </svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" class="icon-pause hidden">
+              <rect x="6" y="4" width="4" height="16"/>
+              <rect x="14" y="4" width="4" height="16"/>
+            </svg>
+            <span id="btn-sw-start-text">スタート</span>
+          </button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Audio for alarm -->
+  <audio id="alarm-sound" preload="auto">
+    <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACA" type="audio/wav">
+  </audio>
+
+  <script src="app.js"></script>
+</body>
+</html>
