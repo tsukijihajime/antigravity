@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>モダンテトリス</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-info left-panel">
+            <div class="panel-box hold-box">
+                <h2>HOLD</h2>
+                <canvas id="hold-canvas" width="120" height="120"></canvas>
+            </div>
+            <div class="panel-box stats-box">
+                <div class="stat">
+                    <span>SCORE</span>
+                    <span id="score">0</span>
+                </div>
+                <div class="stat">
+                    <span>LEVEL</span>
+                    <span id="level">1</span>
+                </div>
+                <div class="stat">
+                    <span>LINES</span>
+                    <span id="lines">0</span>
+                </div>
+            </div>
+            <button id="pause-btn" class="neon-button">PAUSE</button>
+        </div>
+        
+        <div class="game-board">
+            <canvas id="tetris-canvas" width="300" height="600"></canvas>
+            <div id="game-over-screen" class="overlay hidden">
+                <h2>GAME OVER</h2>
+                <p>Final Score: <span id="final-score">0</span></p>
+                <button id="restart-btn" class="neon-button">RETRY</button>
+            </div>
+            <div id="pause-screen" class="overlay hidden">
+                <h2>PAUSE</h2>
+                <p>Press P or ESC to Resume</p>
+            </div>
+        </div>
+
+        <div class="game-info right-panel">
+            <div class="panel-box next-box">
+                <h2>NEXT</h2>
+                <canvas id="next-canvas" width="120" height="360"></canvas>
+            </div>
+            <div class="controls-hint panel-box">
+                <h3>CONTROLS</h3>
+                <ul>
+                    <li><span>↑ / W</span> Rotate</li>
+                    <li><span>← / A</span> Left</li>
+                    <li><span>→ / D</span> Right</li>
+                    <li><span>↓ / S</span> Soft Drop</li>
+                    <li><span>Space</span> Hard Drop</li>
+                    <li><span>Shift / C</span> Hold</li>
+                    <li><span>P / ESC</span> Pause</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
