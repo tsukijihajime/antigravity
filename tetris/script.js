@@ -429,3 +429,67 @@ document.addEventListener('keydown', event => {
 
 // ゲーム開始
 resetGame();
+
+// --- Mobile Controls Logic ---
+const btnLeft = document.getElementById('btn-left');
+const btnRight = document.getElementById('btn-right');
+const btnDown = document.getElementById('btn-down');
+const btnRotate = document.getElementById('btn-rotate');
+const btnDrop = document.getElementById('btn-drop');
+const btnHold = document.getElementById('btn-hold');
+
+let moveInterval = null;
+let moveTimeout = null;
+
+function startMove(action) {
+    if (isGameOver || isPaused) return;
+    action();
+    // 最初の押し込みから連続移動開始までのディレイ
+    moveTimeout = setTimeout(() => {
+        moveInterval = setInterval(() => {
+            if (!isGameOver && !isPaused) action();
+        }, 100); // 連続移動の速度
+    }, 200);
+}
+
+function stopMove() {
+    clearTimeout(moveTimeout);
+    clearInterval(moveInterval);
+}
+
+const addTouchEvents = (btn, action, continuous = false) => {
+    if (!btn) return;
+    
+    const handleStart = (e) => {
+        e.preventDefault();
+        if (continuous) {
+            startMove(action);
+        } else {
+            if (!isGameOver && !isPaused) action();
+        }
+        btn.classList.add('active');
+    };
+
+    const handleEnd = (e) => {
+        e.preventDefault();
+        if (continuous) stopMove();
+        btn.classList.remove('active');
+    };
+
+    // Touch events for mobile
+    btn.addEventListener('touchstart', handleStart, { passive: false });
+    btn.addEventListener('touchend', handleEnd, { passive: false });
+    btn.addEventListener('touchcancel', handleEnd, { passive: false });
+
+    // Mouse events for desktop fallback
+    btn.addEventListener('mousedown', handleStart);
+    btn.addEventListener('mouseup', handleEnd);
+    btn.addEventListener('mouseleave', handleEnd);
+};
+
+addTouchEvents(btnLeft, moveLeft, true);
+addTouchEvents(btnRight, moveRight, true);
+addTouchEvents(btnDown, moveDown, true);
+addTouchEvents(btnRotate, rotate, false);
+addTouchEvents(btnDrop, hardDrop, false);
+addTouchEvents(btnHold, hold, false);

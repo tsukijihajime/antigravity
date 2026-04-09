@@ -211,3 +211,184 @@ h1, h2, h3, .stat span:first-child, .neon-button {
     color: var(--text-primary);
     border: 1px solid rgba(255,255,255,0.2);
 }
+
+/* --- Mobile Controls & Responsive Design --- */
+.mobile-controls {
+    display: none;
+}
+
+.control-btn {
+    background: rgba(30, 41, 59, 1);
+    border: 2px solid var(--accent-color);
+    color: var(--text-primary);
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    transition: transform 0.1s;
+    cursor: pointer;
+}
+
+.control-btn:active, .control-btn.active {
+    background: var(--accent-color);
+    color: #fff;
+    transform: scale(0.9);
+}
+
+.small-btn {
+    border-radius: 12px;
+    width: auto;
+    height: 40px;
+    padding: 0 15px;
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+}
+
+.large-btn {
+    width: 70px;
+    height: 70px;
+    font-size: 2rem;
+}
+
+@media (max-width: 768px) {
+    body {
+        height: 100vh;
+        width: 100vw;
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
+    }
+
+    .game-container {
+        flex-direction: column;
+        padding: 5px;
+        gap: 5px;
+        width: 100%;
+        height: 100%;
+        max-height: 100vh;
+        box-shadow: none;
+        border: none;
+        border-radius: 0;
+        background: transparent;
+        justify-content: flex-start;
+        align-items: center;
+    }
+
+    .game-info {
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 5px;
+        margin: 0;
+    }
+
+    .game-info.left-panel { order: 1; }
+    .game-info.right-panel { order: 2; margin-top: -10px; }
+
+    .game-board {
+        order: 3;
+        flex: 1 1 auto;
+        min-height: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        padding: 0;
+        box-shadow: none;
+    }
+
+    #tetris-canvas {
+        height: 100%;
+        max-height: 55vh;
+        width: auto;
+        aspect-ratio: 1 / 2;
+        object-fit: contain;
+    }
+
+    .mobile-controls {
+        order: 4;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        width: 100%;
+        padding: 5px 15px 15px 15px;
+        flex: 0 0 auto;
+    }
+
+    .controls-hint { display: none; }
+
+    .stats-box {
+        flex-direction: row;
+        gap: 5px;
+        padding: 5px;
+        flex: 1;
+        justify-content: space-around;
+        background: transparent;
+        border: none;
+        box-shadow: none;
+    }
+    
+    .stat {
+        background: transparent;
+        border: none;
+        padding: 0;
+    }
+
+    .stat span:first-child { font-size: 0.6rem; margin-bottom: 2px;}
+    .stat span:last-child { font-size: 1rem; }
+
+    .hold-box canvas, .next-box canvas { width: 40px; height: auto; }
+    .next-box canvas { width: 30px; }
+    
+    .panel-box { padding: 5px; margin: 0; }
+    .panel-box h2 { font-size: 0.7rem; margin-bottom: 2px; }
+
+    #pause-btn {
+        padding: 5px 10px;
+        font-size: 0.7rem;
+        height: 30px;
+        align-self: center;
+    }
+
+    /* D-pad and Action Controls layout */
+    .left-controls {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .right-controls {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 15px;
+    }
+
+    .d-pad {
+        position: relative;
+        width: 140px;
+        height: 105px;
+        margin-top: 10px;
+    }
+    #btn-left { position: absolute; left: 0; top: 0; }
+    #btn-right { position: absolute; right: 0; top: 0; }
+    #btn-down { position: absolute; left: 40px; bottom: 0; }
+
+    .action-pad {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 15px;
+        margin-bottom: 5px;
+    }
+}
+ 
+ 

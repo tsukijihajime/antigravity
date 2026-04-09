@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>モダンテトリス</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
@@ -60,6 +60,24 @@
                     <li><span>Shift / C</span> Hold</li>
                     <li><span>P / ESC</span> Pause</li>
                 </ul>
+            </div>
+        </div>
+        
+        <!-- Mobile Controls -->
+        <div class="mobile-controls">
+            <div class="left-controls">
+                <button id="btn-hold" class="control-btn small-btn">HOLD</button>
+                <div class="d-pad">
+                    <button id="btn-left" class="control-btn">◀</button>
+                    <button id="btn-down" class="control-btn">▼</button>
+                    <button id="btn-right" class="control-btn">▶</button>
+                </div>
+            </div>
+            <div class="right-controls">
+                <div class="action-pad">
+                    <button id="btn-rotate" class="control-btn large-btn">↻</button>
+                    <button id="btn-drop" class="control-btn">DROP</button>
+                </div>
             </div>
         </div>
     </div>
